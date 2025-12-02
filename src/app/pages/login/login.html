@@ -1,0 +1,88 @@
+<div class="login-container">
+  <div class="login-wrapper">
+    <p-card class="login-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-user-circle"></i>
+          <h1>Iniciar Sesión</h1>
+          <p>Ingresa tus credenciales</p>
+        </div>
+      </ng-template>
+
+      <div class="form-container">
+        @if (showError()) {
+          <p-message severity="error" [text]="errorMessage()" styleClass="w-full mb-3" />
+        }
+        
+        <div class="info-box">
+          <p class="info-title"><i class="pi pi-info-circle"></i> Usuarios disponibles:</p>
+          @for (user of availableUsers; track user.username) {
+            <div class="user-info">
+              <strong>{{ user.username }}</strong> / {{ user.password }}
+            </div>
+          }
+        </div>
+
+        <div class="field">
+          <label for="username">Usuario</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input 
+              pInputText 
+              id="username" 
+              [(ngModel)]="username"
+              placeholder="Ingresa tu usuario"
+              class="w-full" 
+              type="text"
+              aria-label="Usuario"
+            />
+          </span>
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-lock"></i>
+            <p-password 
+              [(ngModel)]="password"
+              [feedback]="false"
+              placeholder="Ingresa tu contraseña"
+              styleClass="w-full"
+              [inputStyle]="{'width': '100%'}"
+              aria-label="Contraseña"
+            />
+          </span>
+        </div>
+
+        <div class="forgot-password">
+          <a href="#" tabindex="0">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <p-button 
+          label="Iniciar Sesión" 
+          icon="pi pi-sign-in"
+          (onClick)="onLogin()"
+          styleClass="w-full"
+          [raised]="true"
+        />
+
+        <div class="divider">
+          <span>o</span>
+        </div>
+
+        <div class="social-login">
+          <p-button 
+            label="Google" 
+            icon="pi pi-google"
+            styleClass="w-full p-button-outlined"
+            [raised]="true"
+          />
+        </div>
+
+        <div class="register-link">
+          <p>¿No tienes cuenta? <a href="#" tabindex="0">Regístrate aquí</a></p>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

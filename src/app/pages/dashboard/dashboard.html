@@ -1,0 +1,334 @@
+<div class="dashboard-container">
+  <!-- Header con Menú -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="logo">
+        <i class="pi pi-microchip"></i>
+        <div class="logo-text">
+          <span class="title">Monitor ESP32</span>
+          <span class="subtitle">Sistema de Sensores IoT</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="user-info">
+          <i class="pi pi-user"></i>
+          <span>{{ currentUser()?.name }}</span>
+        </div>
+        <p-button 
+          icon="pi pi-sign-out" 
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          (onClick)="onLogout()"
+          aria-label="Cerrar sesión"
+        />
+      </div>
+    </div>
+    <p-menubar [model]="menuItems()" styleClass="mobile-menu" />
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="dashboard-main">
+    <!-- Estado del Sistema -->
+    <div class="system-status">
+      <div class="status-card online">
+        <i class="pi pi-check-circle"></i>
+        <div>
+          <div class="status-label">Estado del Sistema</div>
+          <div class="status-value">En Línea</div>
+        </div>
+      </div>
+      <div class="status-card">
+        <i class="pi pi-clock"></i>
+        <div>
+          <div class="status-label">Intervalo de Actualización</div>
+          <div class="status-value">{{ updateInterval() }}s</div>
+        </div>
+      </div>
+      <div class="status-card">
+        <i class="pi pi-sync"></i>
+        <div>
+          <div class="status-label">Última Actualización</div>
+          <div class="status-value">{{ lastUpdate() | date:'HH:mm:ss' }}</div>
+        </div>
+      </div>
+      <div class="status-card">
+        <i class="pi pi-database"></i>
+        <div>
+          <div class="status-label">Lecturas Totales</div>
+          <div class="status-value">{{ readings().length }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lecturas Actuales de Sensores -->
+    @if (latestReading(); as reading) {
+      <div class="sensors-grid">
+        <!-- Temperatura -->
+        <p-card class="sensor-card temperature">
+          <div class="sensor-header">
+            <div class="sensor-icon">
+              <i class="pi pi-sun"></i>
+            </div>
+            <div class="sensor-title">
+              <h3>Temperatura</h3>
+              <p>Sensor Interno ESP32</p>
+            </div>
+          </div>
+          <div class="sensor-value">
+            <span class="value">{{ reading.temperature.toFixed(1) }}</span>
+            <span class="unit">°C</span>
+          </div>
+          <div class="sensor-status">
+            <p-tag 
+              [value]="reading.temperature < 28 ? 'Normal' : reading.temperature < 32 ? 'Alerta' : 'Crítico'"
+              [severity]="getTemperatureStatus(reading.temperature)"
+            />
+          </div>
+        </p-card>
+
+        <!-- Humedad -->
+        <p-card class="sensor-card humidity">
+          <div class="sensor-header">
+            <div class="sensor-icon">
+              <i class="pi pi-cloud"></i>
+            </div>
+            <div class="sensor-title">
+              <h3>Humedad</h3>
+              <p>Sensor Externo DHT22</p>
+            </div>
+          </div>
+          <div class="sensor-value">
+            <span class="value">{{ reading.humidity.toFixed(1) }}</span>
+            <span class="unit">%</span>
+          </div>
+          <div class="sensor-status">
+            <p-tag 
+              [value]="reading.humidity >= 30 && reading.humidity <= 60 ? 'Normal' : 'Alerta'"
+              [severity]="getHumidityStatus(reading.humidity)"
+            />
+          </div>
+        </p-card>
+
+        <!-- Presión -->
+        <p-card class="sensor-card pressure">
+          <div class="sensor-header">
+            <div class="sensor-icon">
+              <i class="pi pi-compass"></i>
+            </div>
+            <div class="sensor-title">
+              <h3>Presión</h3>
+              <p>Sensor BMP280</p>
+            </div>
+          </div>
+          <div class="sensor-value">
+            <span class="value">{{ reading.pressure.toFixed(0) }}</span>
+            <span class="unit">hPa</span>
+          </div>
+          <div class="sensor-status">
+            <p-tag value="Normal" severity="success" />
+          </div>
+        </p-card>
+
+        <!-- Luz -->
+        <p-card class="sensor-card light">
+          <div class="sensor-header">
+            <div class="sensor-icon">
+              <i class="pi pi-bolt"></i>
+            </div>
+            <div class="sensor-title">
+              <h3>Luminosidad</h3>
+              <p>Sensor LDR</p>
+            </div>
+          </div>
+          <div class="sensor-value">
+            <span class="value">{{ reading.light.toFixed(0) }}</span>
+            <span class="unit">lux</span>
+          </div>
+          <div class="sensor-status">
+            <p-tag value="Normal" severity="success" />
+          </div>
+        </p-card>
+      </div>
+    }
+
+    <!-- Gráficos en Tiempo Real -->
+    <div class="charts-section">
+      <h2 class="section-title">
+        <i class="pi pi-chart-line"></i>
+        Gráficos en Tiempo Real
+      </h2>
+      
+      <div class="charts-grid">
+        <!-- Gráfico de Temperatura -->
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="chart-header">
+              <h3><i class="pi pi-sun"></i> Temperatura</h3>
+              <span class="chart-subtitle">Últimas 20 lecturas</span>
+            </div>
+          </ng-template>
+          <div class="chart-container">
+            <p-chart 
+              type="line" 
+              [data]="temperatureChartData()" 
+              [options]="chartOptions()"
+            />
+          </div>
+        </p-card>
+
+        <!-- Gráfico de Humedad -->
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="chart-header">
+              <h3><i class="pi pi-cloud"></i> Humedad</h3>
+              <span class="chart-subtitle">Últimas 20 lecturas</span>
+            </div>
+          </ng-template>
+          <div class="chart-container">
+            <p-chart 
+              type="line" 
+              [data]="humidityChartData()" 
+              [options]="chartOptions()"
+            />
+          </div>
+        </p-card>
+
+        <!-- Gráfico de Presión -->
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="chart-header">
+              <h3><i class="pi pi-compass"></i> Presión</h3>
+              <span class="chart-subtitle">Últimas 20 lecturas</span>
+            </div>
+          </ng-template>
+          <div class="chart-container">
+            <p-chart 
+              type="line" 
+              [data]="pressureChartData()" 
+              [options]="chartOptions()"
+            />
+          </div>
+        </p-card>
+
+        <!-- Gráfico de Luz -->
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="chart-header">
+              <h3><i class="pi pi-bolt"></i> Luminosidad</h3>
+              <span class="chart-subtitle">Últimas 20 lecturas</span>
+            </div>
+          </ng-template>
+          <div class="chart-container">
+            <p-chart 
+              type="line" 
+              [data]="lightChartData()" 
+              [options]="chartOptions()"
+            />
+          </div>
+        </p-card>
+      </div>
+    </div>
+
+    <!-- Tabla de Historial -->
+    <div class="history-section">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-title">
+            <h2><i class="pi pi-history"></i> Historial de Lecturas</h2>
+            <p-button 
+              label="Descargar CSV" 
+              icon="pi pi-download" 
+              [text]="true"
+              size="small"
+            />
+          </div>
+        </ng-template>
+        <p-table 
+          [value]="readings().slice(0, 10)" 
+          [paginator]="false"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          styleClass="p-datatable-sm"
+          [scrollable]="true"
+          scrollHeight="400px"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>ID</th>
+              <th>Fecha/Hora</th>
+              <th>Temperatura (°C)</th>
+              <th>Humedad (%)</th>
+              <th>Presión (hPa)</th>
+              <th>Luz (lux)</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-reading>
+            <tr>
+              <td>{{ reading.id }}</td>
+              <td>{{ formatTimestamp(reading.timestamp) }}</td>
+              <td>
+                <span class="value-badge temperature">
+                  {{ reading.temperature.toFixed(1) }}°C
+                </span>
+              </td>
+              <td>
+                <span class="value-badge humidity">
+                  {{ reading.humidity.toFixed(1) }}%
+                </span>
+              </td>
+              <td>
+                <span class="value-badge pressure">
+                  {{ reading.pressure.toFixed(0) }} hPa
+                </span>
+              </td>
+              <td>
+                <span class="value-badge light">
+                  {{ reading.light.toFixed(0) }} lux
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <!-- Información del Sistema -->
+    <div class="info-section">
+      <p-card>
+        <ng-template pTemplate="header">
+          <h2><i class="pi pi-info-circle"></i> Información del Sistema</h2>
+        </ng-template>
+        <div class="info-content">
+          <div class="info-item">
+            <i class="pi pi-microchip"></i>
+            <div>
+              <strong>Dispositivo:</strong>
+              <span>ESP32 DevKit V1</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <i class="pi pi-wifi"></i>
+            <div>
+              <strong>Conexión:</strong>
+              <span>WiFi 2.4GHz</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <i class="pi pi-server"></i>
+            <div>
+              <strong>Backend:</strong>
+              <span>Node.js + Express</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <i class="pi pi-database"></i>
+            <div>
+              <strong>Base de Datos:</strong>
+              <span>MongoDB</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </main>
+</div>

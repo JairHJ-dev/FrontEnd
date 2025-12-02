@@ -1,0 +1,511 @@
+// Mobile First - Dashboard ESP32 IoT
+.dashboard-container {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+// ========== HEADER ==========
+.dashboard-header {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    color: white;
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      
+      i {
+        font-size: 2rem;
+        color: white;
+      }
+      
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+        
+        .title {
+          font-size: 1.1rem;
+          font-weight: 700;
+          line-height: 1.2;
+        }
+        
+        .subtitle {
+          font-size: 0.75rem;
+          opacity: 0.9;
+          font-weight: 400;
+        }
+      }
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      
+      .user-info {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        
+        i {
+          font-size: 1.1rem;
+        }
+      }
+      
+      ::ng-deep .p-button {
+        color: white;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
+      }
+    }
+  }
+  
+  ::ng-deep .mobile-menu {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 0;
+    padding: 0.5rem 1rem;
+    
+    .p-menubar-root-list {
+      gap: 0.25rem;
+    }
+    
+    .p-menuitem-link {
+      color: white;
+      font-size: 0.85rem;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+}
+
+// ========== MAIN CONTENT ==========
+.dashboard-main {
+  padding: 1rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+// ========== SYSTEM STATUS ==========
+.system-status {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  
+  .status-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    i {
+      font-size: 2rem;
+      color: #666;
+    }
+    
+    &.online i {
+      color: #4CAF50;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-label {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+    
+    .status-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+// ========== SENSORS GRID ==========
+.sensors-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.sensor-card {
+  ::ng-deep .p-card-body {
+    padding: 1.5rem;
+  }
+  
+  .sensor-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    
+    .sensor-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      i {
+        font-size: 1.75rem;
+        color: white;
+      }
+    }
+    
+    .sensor-title {
+      flex: 1;
+      
+      h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 600;
+      }
+      
+      p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #666;
+      }
+    }
+  }
+  
+  .sensor-value {
+    text-align: center;
+    margin-bottom: 1rem;
+    
+    .value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .unit {
+      font-size: 1.25rem;
+      color: #666;
+      margin-left: 0.25rem;
+    }
+  }
+  
+  .sensor-status {
+    display: flex;
+    justify-content: center;
+  }
+  
+  &.temperature .sensor-icon {
+    background: linear-gradient(135deg, #FF6384, #FF8FA3);
+  }
+  
+  &.humidity .sensor-icon {
+    background: linear-gradient(135deg, #36A2EB, #66B2E8);
+  }
+  
+  &.pressure .sensor-icon {
+    background: linear-gradient(135deg, #4BC0C0, #6BD0D0);
+  }
+  
+  &.light .sensor-icon {
+    background: linear-gradient(135deg, #FFCE56, #FFD976);
+  }
+}
+
+// ========== CHARTS SECTION ==========
+.charts-section {
+  margin-bottom: 2rem;
+  
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    i {
+      color: #2196F3;
+    }
+  }
+  
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .chart-header {
+    padding: 1.25rem 1.25rem 0;
+    
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      i {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .chart-subtitle {
+      font-size: 0.8rem;
+      color: #666;
+    }
+  }
+  
+  .chart-container {
+    min-height: 250px;
+    padding: 1rem;
+  }
+}
+
+// ========== HISTORY SECTION ==========
+.history-section {
+  margin-bottom: 2rem;
+  
+  .card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.25rem 0;
+    
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      i {
+        color: #2196F3;
+      }
+    }
+  }
+  
+  .value-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    
+    &.temperature {
+      background: #FFE8EC;
+      color: #FF6384;
+    }
+    
+    &.humidity {
+      background: #E3F2FD;
+      color: #36A2EB;
+    }
+    
+    &.pressure {
+      background: #E0F7F7;
+      color: #4BC0C0;
+    }
+    
+    &.light {
+      background: #FFF8E1;
+      color: #FF9800;
+    }
+  }
+}
+
+// ========== INFO SECTION ==========
+.info-section {
+  margin-bottom: 2rem;
+  
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 1.25rem 1.25rem 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    i {
+      color: #2196F3;
+    }
+  }
+  
+  .info-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    
+    i {
+      font-size: 1.5rem;
+      color: #2196F3;
+    }
+    
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    
+    strong {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    
+    span {
+      font-size: 0.95rem;
+      color: #333;
+      font-weight: 500;
+    }
+  }
+}
+
+// ========== TABLET 768px+ ==========
+@media (min-width: 768px) {
+  .dashboard-main {
+    padding: 1.5rem;
+  }
+  
+  .system-status {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .sensors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .info-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .header-content {
+    padding: 1rem 1.5rem !important;
+    
+    .header-actions .user-info {
+      display: flex !important;
+    }
+  }
+  
+  .dashboard-header ::ng-deep .mobile-menu {
+    padding: 0.5rem 1.5rem;
+  }
+}
+
+// ========== DESKTOP 1024px+ ==========
+@media (min-width: 1024px) {
+  .dashboard-main {
+    padding: 2rem;
+  }
+  
+  .system-status {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .sensors-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .header-content {
+    padding: 1rem 2rem !important;
+    
+    .logo {
+      .logo-text {
+        .title {
+          font-size: 1.3rem;
+        }
+        
+        .subtitle {
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+  
+  .dashboard-header ::ng-deep .mobile-menu {
+    padding: 0.5rem 2rem;
+  }
+}
+
+// ========== XL 1440px+ ==========
+@media (min-width: 1440px) {
+  .chart-container {
+    min-height: 300px;
+  }
+}
+
+// ========== UTILITIES ==========
+::ng-deep .w-full {
+  width: 100%;
+}
+
+::ng-deep .p-datatable {
+  font-size: 0.9rem;
+  
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  td {
+    color: #555;
+  }
+}
